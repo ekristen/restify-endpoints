@@ -5,8 +5,6 @@ var manager = require('../lib');
 
 function testMiddleware (req, res, next) {
   req.testMiddleware = "yes";
-  res.testMiddleware = "yes";
-  console.log(this.name);
   return next();
 }
 
@@ -58,12 +56,12 @@ exports.singleMiddleware = function(test) {
   test.done();
 }
 
-
 exports.multipleMiddleware = function(test) {
   var endpoints = new manager.EndpointManager();
 
   try {
     endpoints.addEndpoint({
+      name: 'test',
       description: 'test',
       method: 'GET',
       path: '/test',
@@ -72,78 +70,17 @@ exports.multipleMiddleware = function(test) {
         testMiddleware2
       ],
       fn: function (req, res, next) {
-        res.send(200);
+        return res.send(200);
       }
     });
 
     endpoints.attach(server);
   } catch (e) {
-    test.equal(e.message, "Name is required in an endpoint definition");
+    test.equal(e.message, "Path is required in an endpoint definition");
   }
 
   test.done();
 }
 
 
-exports.globalSingleMiddleware = function(test) {
-  var endpoints = new manager.EndpointManager();
 
-  try {
-    endpoints.addEndpoint({
-      description: 'test',
-      method: 'GET',
-      path: '/test',
-      middleware: [
-        testMiddleware
-      ],
-      fn: function (req, res, next) {
-        res.send(200);
-      }
-    });
-
-    endpoints.attach(server);
-  } catch (e) {
-    test.equal(e.message, "Name is required in an endpoint definition");
-  }
-
-  client.get('/test', function(err, req, res, data) {
-    test.ifError(err);
-    test.equal(req.testMiddleware, "yes");
-    test.equal(res.statusCode, 200);
-    test.done();
-  });
-}
-
-exports.globalMultipleMiddleware = function(test) {
-  var endpoints = new manager.EndpointManager({
-    middleware: [
-      testMiddleware
-    ]
-  });
-
-  try {
-    endpoints.addEndpoint({
-      name: 'testing',
-      description: 'test',
-      method: 'GET',
-      path: '/test',
-      fn: function (req, res, next) {
-        console.log(req.testMiddleware)
-        res.send(200);
-      }
-    });
-
-    endpoints.attach(server);
-  } catch (e) {
-    console.log(e.message);
-    test.equal(e.message, "Name is required in an endpoint definition");
-  }
-
-  client.get('/test', function(err, req, res, data) {
-    test.ifError(err);
-    test.equal(req.testMiddleware, "yes");
-    test.equal(req.testMiddleware2, "yes");
-    test.equal(res.statusCode, 200);
-    test.done();
-  });
-}
