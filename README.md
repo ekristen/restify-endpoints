@@ -1,3 +1,5 @@
+**Deprecated in favor of the upcoming https://github.com/ekristen/endpointer module that is not restify specific and will have documentation generation capabilities**
+
 [![Build Status](https://travis-ci.org/ekristen/restify-endpoints.png)](https://travis-ci.org/ekristen/restify-endpoints)
 [![npm version](https://badge.fury.io/js/restify-endpoints.svg)](http://badge.fury.io/js/restify-endpoints)
 
